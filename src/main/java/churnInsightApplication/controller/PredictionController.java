@@ -1,9 +1,9 @@
-package ChurnInsightApplication.controller;
+package churnInsightApplication.controller;
 
 
-import ChurnInsightApplication.dto.ClientRequest;
-import ChurnInsightApplication.dto.PrediccionResponse;
-import ChurnInsightApplication.service.PredictionService;
+import churnInsightApplication.dto.ClientRequest;
+import churnInsightApplication.dto.PrediccionResponse;
+import churnInsightApplication.service.PredictionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,7 @@ public class PredictionController {
     @Autowired
     private PredictionService predictionService;
 
-    @PostMapping
+    @PostMapping("/predict")
     public PrediccionResponse predict(@Valid @RequestBody ClientRequest request){
         return predictionService.predecir(request);
     }

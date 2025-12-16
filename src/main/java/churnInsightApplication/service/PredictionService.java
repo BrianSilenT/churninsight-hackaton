@@ -1,8 +1,8 @@
-package ChurnInsightApplication.service;
+package churnInsightApplication.service;
 
 
-import ChurnInsightApplication.dto.ClientRequest;
-import ChurnInsightApplication.dto.PrediccionResponse;
+import churnInsightApplication.dto.ClientRequest;
+import churnInsightApplication.dto.PrediccionResponse;
 import org.springframework.stereotype.Service;
 
 @Service

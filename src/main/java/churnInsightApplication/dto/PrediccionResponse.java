@@ -1,4 +1,4 @@
-package ChurnInsightApplication.dto;
+package churnInsightApplication.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -9,6 +9,6 @@ import lombok.Data;
 public class PrediccionResponse {
 
     private String prevision;
-    private Double proobabilidad;
+    private Double probabilidad;
 
 }

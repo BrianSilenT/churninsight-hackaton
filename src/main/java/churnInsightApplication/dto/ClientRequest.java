@@ -1,4 +1,4 @@
-package ChurnInsightApplication.dto;
+package churnInsightApplication.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
