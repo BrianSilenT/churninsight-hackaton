@@ -31,3 +31,23 @@ build/
 
 ### VS Code ###
 .vscode/
+# Maven build
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python (si tu equipo usa notebooks)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
