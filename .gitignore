@@ -1,9 +1,15 @@
-HELP.md
+# =========================
+# Java / Maven / Spring Boot
+# =========================
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.log
 
+# =========================
+# IDEs
+# =========================
 ### STS ###
 .apt_generated
 .classpath
@@ -14,7 +20,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -31,23 +37,27 @@ build/
 
 ### VS Code ###
 .vscode/
-# Maven build
-target/
 
-# IntelliJ IDEA
-.idea/
-*.iml
+# =========================
+# Frontend (Node.js / JS frameworks)
+# =========================
+node_modules/
+dist/
+build/
 
-# Logs
-*.log
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Python (si tu equipo usa notebooks)
+# =========================
+# Python / Data Science
+# =========================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.ipynb_checkpoints/
 .venv/
+.env
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db

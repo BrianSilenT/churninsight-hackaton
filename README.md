@@ -1,76 +1,19 @@
+$ # ChurnInsight Hackathon
 
-# Churn Insight API
+## Estructura del monorepo
+- `/backend` → API Java Spring Boot (predicciones y lógica de negocio).
+- `/frontend` → Aplicación web para ingresar datos y visualizar resultados.
+- `/data-science` → Notebooks/Scripts Python para preparación de datos y exportación del modelo a ONNX.
+- `README.md` → Documentación general y guías del proyecto.
 
-API de predicción de churn (cancelación de clientes) desarrollada en **Spring Boot** para el hackathon.
+## Convenciones de ramas
+- `feature/backend-<tarea>` → cambios del backend.
+- `feature/frontend-<tarea>` → cambios del frontend.
+- `feature/data-<tarea>` → cambios de data science.
+- Antes de hacer merge a `main`, validar que la parte afectada compila/funciona.
 
-## 🚀 Cómo ejecutar el proyecto
-
-1. Clonar el repositorio:
-   bash
-   git clone https://github.com/tuusuario/hackaton-churninsight.git
-   cd hackaton-churninsight
-
-2. Compilar y correr:
-   bash
-   mvn clean install
-   mvn spring-boot:run
-
-3. El servidor estará disponible en:
-   http://localhost:8080
-   
-
-## 📌 Endpoint principal
-
-### POST `/api/predict`
-
-**Descripción:**  
-Recibe información de un cliente y devuelve una predicción sobre su continuidad.
-
-**Request (JSON):**
-json
-{
-  "tiempo_contrato_meses": 12,
-  "retrasos_pago": 2,
-  "uso_mensual": 14.5,
-  "plan": "Premium"
-}
-
-
-**Response (JSON):**
-json
-{
-  "prevision": "Va a continuar",
-  "probabilidad": 0.5
-}
-
-
-
-## 🧪 Pruebas en Postman
-
-1. Abrir Postman.  
-2. Crear una nueva **Request**:  
-   - Método: `POST`  
-   - URL: `http://localhost:8080/api/predict`  
-   - Headers:  
-     - `Content-Type: application/json`  
-   - Body → raw → JSON:
-     json
-     {
-       "tiempo_contrato_meses": 12,
-       "retrasos_pago": 2,
-       "uso_mensual": 14.5,
-       "plan": "Premium"
-     }
-3. Presionar **Send** y validar la respuesta.
-
-
-## 📂 Estructura del proyecto
-src/main/java/com/churninsight
-├── ChurnInsightApplication.java   # Clase principal
-├── controller
-│   └── PredictionController.java  # Controlador REST
-├── dto
-│   ├── ClientRequest.java         # DTO de entrada
-│   └── PrediccionResponse.java    # DTO de salida
-└── service
-    └── PredictionService.java     # Lógica de predicción
+## Cómo levantar cada parte (resumen)
+- **Backend:**
+  ```bash
+  cd backend
+  mvn spring-boot
