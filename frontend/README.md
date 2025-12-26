@@ -115,6 +115,4 @@ npm run lint:ci      # Lint para CI (falla si hay warnings)
 Para preguntas o contribuciones, abre un issue o PR en el repositorio. Licencia: especificar si aplica.
 
 ---
-
-¡Listo! Si quieres, puedo añadir secciones específicas (por ejemplo: guías de diseño, cómo correr Storybook si lo agregas, o ejemplos de endpoints para conectar datos) o adaptar el texto al tono del equipo.
   
