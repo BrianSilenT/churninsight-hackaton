@@ -58,12 +58,6 @@ venv/
 env/
 .env
 
-# Datasets (No subir archivos pesados de Kaggle)
-data-science/data/
-*.csv
-*.xlsx
-*.zip
-
 # Modelos entrenados
 *.pkl
 *.joblib
