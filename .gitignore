@@ -54,7 +54,20 @@ __pycache__/
 *.pyd
 .ipynb_checkpoints/
 .venv/
+venv/
+env/
 .env
+
+# Datasets (No subir archivos pesados de Kaggle)
+data-science/data/
+*.csv
+*.xlsx
+*.zip
+
+# Modelos entrenados
+*.pkl
+*.joblib
+*.h5
 
 # =========================
 # OS files
