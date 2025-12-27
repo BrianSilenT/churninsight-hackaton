@@ -54,7 +54,14 @@ __pycache__/
 *.pyd
 .ipynb_checkpoints/
 .venv/
+venv/
+env/
 .env
+
+# Modelos entrenados
+*.pkl
+*.joblib
+*.h5
 
 # =========================
 # OS files
