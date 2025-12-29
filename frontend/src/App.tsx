@@ -7,6 +7,7 @@ interface ClientData {
   tiempoContrato: string;
   retrasosPagos: number;
   usoApp: string;
+  planType: string;
   vaCancelar: boolean;
   probabilidad: number;
 }
@@ -19,6 +20,7 @@ const mockClients: { [key: string]: ClientData } = {
     tiempoContrato: "24 meses",
     retrasosPagos: 2,
     usoApp: "Alto (85%)",
+    planType: "Premium",
     vaCancelar: false,
     probabilidad: 23,
   },
@@ -28,6 +30,7 @@ const mockClients: { [key: string]: ClientData } = {
     tiempoContrato: "6 meses",
     retrasosPagos: 5,
     usoApp: "Bajo (15%)",
+    planType: "Básico",
     vaCancelar: true,
     probabilidad: 87,
   },
@@ -37,6 +40,7 @@ const mockClients: { [key: string]: ClientData } = {
     tiempoContrato: "18 meses",
     retrasosPagos: 0,
     usoApp: "Medio (60%)",
+    planType: "Estándar",
     vaCancelar: false,
     probabilidad: 12,
   },
@@ -46,6 +50,7 @@ const mockClients: { [key: string]: ClientData } = {
     tiempoContrato: "3 meses",
     retrasosPagos: 3,
     usoApp: "Muy bajo (5%)",
+    planType: "Básico",
     vaCancelar: true,
     probabilidad: 92,
   },
@@ -239,6 +244,15 @@ export default function App() {
                   >
                     Uso de App
                   </th>
+                  <th
+                    className={`px-4 py-3 text-left ${
+                      darkMode
+                        ? "text-gray-300"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    Tipo de Plan
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -297,6 +311,15 @@ export default function App() {
                     }`}
                   >
                     {clientData.usoApp}
+                  </td>
+                  <td
+                    className={`px-4 py-4 ${
+                      darkMode
+                        ? "text-gray-200"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    {clientData.planType}
                   </td>
                 </tr>
               </tbody>
