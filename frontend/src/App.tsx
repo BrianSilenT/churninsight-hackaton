@@ -1,81 +1,62 @@
-import { useState } from "react";
 import { Search, Moon, Sun, RotateCcw } from "lucide-react";
+import { useClientByDni } from "./hooks/useClient";
+import type { ClientData } from "./types/client";
+import { mockClients } from "./mocks/mockClients";
+import { useState, useEffect } from "react";
+import type { KeyboardEvent } from "react";
 
-interface ClientData {
-  dni: string;
-  nombreUsuario: string;
-  tiempoContrato: string;
-  retrasosPagos: number;
-  usoApp: string;
-  planType: string;
-  vaCancelar: boolean;
-  probabilidad: number;
-}
-
-// Datos de ejemplo
-const mockClients: { [key: string]: ClientData } = {
-  "12345678": {
-    dni: "12345678",
-    nombreUsuario: "María González",
-    tiempoContrato: "24 meses",
-    retrasosPagos: 2,
-    usoApp: "Alto (85%)",
-    planType: "Premium",
-    vaCancelar: false,
-    probabilidad: 23,
-  },
-  "87654321": {
-    dni: "87654321",
-    nombreUsuario: "Carlos Ramírez",
-    tiempoContrato: "6 meses",
-    retrasosPagos: 5,
-    usoApp: "Bajo (15%)",
-    planType: "Básico",
-    vaCancelar: true,
-    probabilidad: 87,
-  },
-  "45678912": {
-    dni: "45678912",
-    nombreUsuario: "Ana Martínez",
-    tiempoContrato: "18 meses",
-    retrasosPagos: 0,
-    usoApp: "Medio (60%)",
-    planType: "Estándar",
-    vaCancelar: false,
-    probabilidad: 12,
-  },
-  "78912345": {
-    dni: "78912345",
-    nombreUsuario: "Luis Fernández",
-    tiempoContrato: "3 meses",
-    retrasosPagos: 3,
-    usoApp: "Muy bajo (5%)",
-    planType: "Básico",
-    vaCancelar: true,
-    probabilidad: 92,
-  },
-};
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [dniInput, setDniInput] = useState("");
-  const [clientData, setClientData] =
-    useState<ClientData | null>(null);
+  const [searchDni, setSearchDni] = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
+
+  const [mocksActive, setMocksActive] = useState(false);
+
+
+  // CONSULTA DE CLIENTE POR API si y solo si searchDni existe
+
+  const { data: queriedClient, isLoading, error } = useClientByDni(searchDni);
+
+  // SI API responde se utiliza ese ClientRequest, sino se usa el mock como simulación
+
+  const clientData = (queriedClient ?? (searchAttempted && !isLoading && error ? mockClients[dniInput] ?? null : null)) as ClientData | null;
+
+  // Escucha eventos del mock service worker para saber si está activo
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).__MSW_ACTIVE) {
+      setMocksActive(true);
+      return;
+    }
+
+    function onStarted() {
+      setMocksActive(true);
+    }
+    function onFailed() {
+      setMocksActive(false);
+    }
+    window.addEventListener("msw:started", onStarted);
+    window.addEventListener("msw:failed", onFailed);
+    return () => {
+      window.removeEventListener("msw:started", onStarted);
+      window.removeEventListener("msw:failed", onFailed);
+    };
+  }, []);
 
   const handleSearch = () => {
     setSearchAttempted(true);
-    const client = mockClients[dniInput];
-    setClientData(client || null);
+    setSearchDni(dniInput);
   };
 
   const handleReset = () => {
     setDniInput("");
-    setClientData(null);
+    setSearchDni(null);
     setSearchAttempted(false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearch();
     }
@@ -99,9 +80,25 @@ export default function App() {
         {/* Header */}
         <div className={`p-6 rounded-lg shadow-lg mb-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
           <div className="flex items-center justify-between">
-            <h1 className={`text-lg font-semibold ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
-              Cancelaciones en servicios y suscripciones
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className={`text-lg font-semibold ${darkMode ? "text-blue-400" : "text-blue-700"}`}>
+                Cancelaciones en servicios y suscripciones
+              </h1>
+              {import.meta.env.DEV && (
+                <span
+                  className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${mocksActive
+                  ? darkMode
+                    ? "bg-green-900 text-green-200"
+                    : "bg-green-100 text-green-800"
+                  : darkMode
+                    ? "bg-yellow-900 text-yellow-200"
+                    : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {mocksActive ? "Mocks ON" : "¡Mock. Inicializando...!"}
+                </span>
+              )}
+            </div>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className={`p-3 rounded-full transition-all ${
@@ -116,7 +113,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Search Section */}
+        {/* sección de búsqueda */}
         <div
           className={`p-6 rounded-lg shadow-lg mb-6 ${
             darkMode ? "bg-gray-800" : "bg-white"
@@ -170,13 +167,12 @@ export default function App() {
           {searchAttempted && !clientData && (
             <p className="mt-3 text-red-500">
               No se encontró ningún cliente con el DNI
-              ingresado. Prueba con: 12345678, 87654321,
-              45678912, o 78912345
+              ingresado. Prueba con un usuario que exista
             </p>
           )}
         </div>
 
-        {/* Table Section */}
+        {/* Sección de tabla de resultados*/}
         {clientData && (
           <div
             className={`p-6 rounded-lg shadow-lg mb-6 overflow-x-auto ${
@@ -327,7 +323,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Prediction Result */}
+        {/* Resultados de predicción */}
         {clientData && (
           <div
             className={`p-6 rounded-lg shadow-lg mb-6 ${
@@ -378,7 +374,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Statistics */}
+        {/* Estadísticas*/}
         <div
           className={`p-6 rounded-lg shadow-lg ${
             darkMode ? "bg-gray-800" : "bg-white"
