@@ -57,10 +57,3 @@ backend/src/main/java/churnInsightApplication/
   ```
   GET /actuator/health
   ```
-
----
-
-👉 Con este README, tus compañeros de frontend tendrán claro qué endpoints usar y qué cambios se hicieron.  
-
-¿Quieres que lo preparemos en formato **CHANGELOG.md** también, para que quede un historial de mejoras separado del README?
-
