@@ -1,6 +1,4 @@
-Perfecto, Brian 🙌. El README del backend es justo el lugar para dejar claro todo lo que hicimos y que tus compañeros de frontend sepan cómo integrarse. Te propongo una versión mejorada y más profesional, estilo guía de proyecto:
 
----
 
 # 📊 ChurnInsight Backend
 
