@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 if (import.meta.env.DEV) {
-  // Start MSW in development to mock API
+  // Arranca MSW sol en entorno de desarrollo para pruebas
   import("./mocks/browser").then(({ startWorker }) => startWorker());
 }
 

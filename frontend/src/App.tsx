@@ -1,4 +1,4 @@
-import { Search, Moon, Sun, RotateCcw } from "lucide-react";
+import { Search, Moon, Sun, RotateCcw, ChevronDown } from "lucide-react";
 import { useClientByDni } from "./hooks/useClient";
 import type { ClientData } from "./types/client";
 import { mockClients } from "./mocks/mockClients";
@@ -8,9 +8,12 @@ import type { KeyboardEvent } from "react";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [dniInput, setDniInput] = useState("");
   const [searchDni, setSearchDni] = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
+  const [typedDni, setTypedDni] = useState("");       
+  const [selectInput, setSelectInput] = useState(""); 
+  const [selectedDni, setSelectedDni] = useState<string | null>(null);
+  const [showList, setShowList] = useState(false);
 
   const [mocksActive, setMocksActive] = useState(false);
 
@@ -21,7 +24,24 @@ export default function App() {
 
   // SI API responde se utiliza ese ClientRequest, sino se usa el mock como simulación
 
-  const clientData = (queriedClient ?? (searchAttempted && !isLoading && error ? mockClients[dniInput] ?? null : null)) as ClientData | null;
+  const clientData =
+  (queriedClient ??
+    (searchAttempted && !isLoading && error
+      ? mockClients[selectedDni ?? ""]
+      : null)) as ClientData | null;
+
+  const autocompleteSource: ClientData[] = queriedClient
+  ? Array.isArray(queriedClient)
+    ? queriedClient
+    : [queriedClient]
+  : Object.values(mockClients);
+
+  const filteredUsers = autocompleteSource.filter((u) =>
+  u.dni.includes(selectInput) ||
+  u.nombreUsuario
+    ?.toLowerCase()
+    .includes(selectInput.toLowerCase())
+  );  
 
   // Escucha eventos del mock service worker para saber si está activo
 
@@ -45,15 +65,42 @@ export default function App() {
     };
   }, []);
 
-  const handleSearch = () => {
+  useEffect(() => {
+  const handleClickOutside = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest("#dni-dropdown")) {
+      setShowList(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () =>
+    document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+
+    const handleSearch = () => {
+    const dniToSearch = selectedDni ?? typedDni.trim();
+    if (!dniToSearch) return;
+
+    setSelectedDni(dniToSearch);
     setSearchAttempted(true);
-    setSearchDni(dniInput);
+    setSearchDni(dniToSearch);
   };
 
   const handleReset = () => {
-    setDniInput("");
+    setTypedDni("");        
+    setSelectInput("");       
+    setSelectedDni(null);
     setSearchDni(null);
     setSearchAttempted(false);
+    setShowList(false);
+  };
+
+  const handleSelectUser = (dni: string) => {
+    setSelectInput(dni);   
+    setSelectedDni(dni);   
+    setShowList(false);    
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -106,6 +153,7 @@ export default function App() {
                   ? "bg-gray-800 hover:bg-gray-700 text-yellow-400"
                   : "bg-white hover:bg-gray-50 text-gray-700 shadow-md"
               }`}
+              style={{ cursor: 'pointer', userSelect: 'none' }}
               aria-label="Cambiar tema"
             >
               {darkMode ? <Sun size={24} /> : <Moon size={24} />}
@@ -129,11 +177,10 @@ export default function App() {
           </label>
           <div className="flex gap-3">
             <input
-              id="dni-input"
               type="text"
-              value={dniInput}
-              onChange={(e) => setDniInput(e.target.value)}
-              onKeyPress={handleKeyPress}
+              value={typedDni}
+              onChange={(e) => setTypedDni(e.target.value)}
+              onKeyDown={handleKeyPress}
               placeholder="Ingrese el DNI del cliente"
               className={`flex-1 px-4 py-3 rounded-lg border transition-colors ${
                 darkMode
@@ -148,6 +195,7 @@ export default function App() {
                   ? "bg-blue-600 hover:bg-blue-700 text-white"
                   : "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               }`}
+              style={{ cursor: 'pointer', userSelect: 'none' }}
             >
               <Search size={20} />
               Buscar
@@ -159,13 +207,94 @@ export default function App() {
                   ? "bg-gray-600 hover:bg-gray-700 text-gray-100"
                   : "bg-gray-200 hover:bg-gray-300 text-gray-700"
               }`}
+              style={{ cursor: 'pointer', userSelect: 'none' }}
             >
               <RotateCcw size={20} />
               Limpiar
             </button>
           </div>
+
+          <br></br>
+
+          <div className="relative group" id="dni-dropdown">
+            <div
+              className="relative flex items-center cursor-pointer"
+              onClick={() => setShowList((prev) => !prev)}
+            >
+              <input
+                type="text"
+                value={selectInput}
+                readOnly
+                placeholder="Seleccione el DNI del cliente"
+                className={`w-full px-4 pr-12 py-3 rounded-lg border cursor-pointer
+                  transition-all focus:outline-none focus:ring-2 focus:ring-blue-500
+                  ${
+                    darkMode
+                      ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 shadow-sm"
+                  }`}
+              />
+
+              {/* Icono dropdown */}
+              <div
+                className={`absolute right-4 flex items-center pointer-events-none
+                  transition-transform duration-200
+                  ${showList ? "rotate-180" : "rotate-0"}
+                  ${darkMode ? "text-gray-300" : "text-gray-500"}
+                `}
+                style={{ cursor: 'pointer', userSelect: 'none' }}
+              >
+                <ChevronDown size={20} />
+              </div>
+            </div>
+
+            {/* Lista desplegable */}
+            {showList && (
+            <ul
+              id="dni-dropdown-list"
+              className={`absolute z-[100] top-[105%] left-0 w-full
+                rounded-lg border shadow-2xl
+                ${darkMode ? "bg-gray-800 border-gray-600" : "bg-white border-gray-300"}
+              `}
+              style={{ 
+                maxHeight: '250px', 
+                overflowY: 'auto', 
+                display: 'block',
+                position: 'absolute',
+                width: '55%'
+              }}
+            >
+              {filteredUsers.length === 0 ? (
+                <li className="px-4 py-3 text-sm opacity-70 italic text-center">
+                  No hay usuarios disponibles
+                </li>
+              ) : (
+                filteredUsers.map((user) => (
+                  <li
+                    key={user.dni}
+                    onClick={() => handleSelectUser(user.dni)}
+                    className={`group flex justify-between items-center px-4 py-3 
+                      border-b last:border-none transition-all
+                      ${darkMode 
+                          ? "text-gray-100 hover:bg-blue-600 border-gray-700" 
+                          : "text-gray-900 hover:bg-blue-100 border-gray-100"
+                      }`}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                  >
+                    <span className="font-bold pointer-events-none">{user.dni}</span>
+                    <span className="text-xs opacity-60 pointer-events-none uppercase">
+                      {user.nombreUsuario}
+                    </span>
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
+            
+          </div>
+          
           {searchAttempted && !clientData && (
-            <p className="mt-3 text-red-500">
+            <p className="mt-3 text-red-800">
               No se encontró ningún cliente con el DNI
               ingresado. Prueba con un usuario que exista
             </p>
