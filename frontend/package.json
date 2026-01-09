@@ -29,6 +29,8 @@
             "@radix-ui/react-toggle": "^1.1.2",
             "@radix-ui/react-toggle-group": "^1.1.2",
             "@radix-ui/react-tooltip": "^1.1.8",
+            "@tanstack/react-query": "^5.90.15",
+            "axios": "^1.13.2",
             "class-variance-authority": "^0.7.1",
             "clsx": "*",
             "cmdk": "^1.1.1",
@@ -44,26 +46,38 @@
             "recharts": "^2.15.2",
             "sonner": "^2.0.3",
             "tailwind-merge": "*",
-            "vaul": "^1.1.2"
+            "vaul": "^1.1.2",
+            "zod": "^4.2.1"
       },
       "devDependencies": {
+            "@testing-library/dom": "^10.4.1",
+            "@testing-library/jest-dom": "^6.9.1",
+            "@testing-library/react": "^16.3.1",
             "@types/node": "^20.10.0",
             "@types/react": "^19.2.7",
             "@types/react-dom": "^19.2.3",
             "@typescript-eslint/eslint-plugin": "^8.50.0",
             "@typescript-eslint/parser": "^8.50.0",
             "@vitejs/plugin-react-swc": "^3.10.2",
+            "autoprefixer": "^10.4.23",
             "eslint": "^9.39.2",
             "eslint-config-prettier": "^10.1.8",
             "eslint-plugin-react": "^7.37.5",
             "eslint-plugin-react-hooks": "^7.0.1",
+            "msw": "^2.12.7",
+            "postcss": "^8.5.6",
+            "tailwind-scrollbar": "^4.0.2",
+            "tailwindcss": "^4.1.18",
             "typescript": "^5.9.3",
-            "vite": "6.3.5"
+            "vite": "6.3.5",
+            "vitest": "^4.0.16"
       },
       "scripts": {
             "dev": "vite",
             "build": "vite build",
             "type-check": "tsc --noEmit",
+            "test": "vitest",
+            "test:watch": "vitest --watch",
             "lint": "eslint --no-ignore \"src/**/*.{ts,tsx}\" --fix",
             "lint:ci": "eslint --no-ignore \"src/**/*.{ts,tsx}\" --max-warnings 0"
       }
