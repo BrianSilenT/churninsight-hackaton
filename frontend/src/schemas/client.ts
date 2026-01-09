@@ -7,7 +7,6 @@ export const ClientDataSchema = z.object({
   nombreUsuario: z.string(),
   tiempoContrato: z.string(),
   retrasosPagos: z.number(),
-  usoApp: z.string(),
   planType: z.string(),
   vaCancelar: z.boolean(),
   probabilidad: z.number(),
