@@ -7,15 +7,15 @@ import type { KeyboardEvent } from "react";
 
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [searchDni, setSearchDni] = useState<string | null>(null);
+  const [darkMode, setDarkMode]               = useState(false);
+  const [searchDni, setSearchDni]             = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
-  const [typedDni, setTypedDni] = useState("");       
-  const [selectInput, setSelectInput] = useState(""); 
-  const [selectedDni, setSelectedDni] = useState<string | null>(null);
-  const [showList, setShowList] = useState(false);
+  const [typedDni, setTypedDni]               = useState("");       
+  const [selectInput, setSelectInput]         = useState(""); 
+  const [selectedDni, setSelectedDni]         = useState<string | null>(null);
+  const [showList, setShowList]               = useState(false);
 
-  const [mocksActive, setMocksActive] = useState(false);
+  const [mocksActive, setMocksActive]         = useState(false);
 
 
   // CONSULTA DE CLIENTE POR API si y solo si searchDni existe
@@ -367,15 +367,6 @@ export default function App() {
                         : "text-gray-700"
                     }`}
                   >
-                    Uso de App
-                  </th>
-                  <th
-                    className={`px-4 py-3 text-left ${
-                      darkMode
-                        ? "text-gray-300"
-                        : "text-gray-700"
-                    }`}
-                  >
                     Tipo de Plan
                   </th>
                 </tr>
@@ -427,15 +418,6 @@ export default function App() {
                     >
                       {clientData.retrasosPagos}
                     </span>
-                  </td>
-                  <td
-                    className={`px-4 py-4 ${
-                      darkMode
-                        ? "text-gray-200"
-                        : "text-gray-900"
-                    }`}
-                  >
-                    {clientData.usoApp}
                   </td>
                   <td
                     className={`px-4 py-4 ${
@@ -534,8 +516,8 @@ export default function App() {
                 darkMode ? "text-blue-300" : "text-blue-700"
               }`}
             >
-              💡 Prueba buscando con estos DNIs de ejemplo:
-              12345678, 87654321, 45678912, o 78912345
+              💡 En caso de probar y no conocer un DNI válido, selecciona el campo de 
+                  "Seleccione el DNI del cliente" y podrás seleccionar cualquier opción
             </p>
           </div>
         )}

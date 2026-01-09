@@ -1,5 +1,5 @@
-import { setupServer } from "msw/node";
 import { createHandlers } from "./handlers";
+import { setupServer } from "msw/node";
 import * as msw from "msw";
 
 //Versión MSW para test y entorno node 
