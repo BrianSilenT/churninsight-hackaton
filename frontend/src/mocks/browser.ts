@@ -22,7 +22,7 @@ export async function startWorker() {
     }
     return worker;
   } catch (err) {
-    console.error("Failed to start MSW worker:", err);
+    console.error("Fallo al iniciar el  MSW worker:", err);
     try {
       if (typeof window !== "undefined") {
         (window as any).__MSW_ACTIVE = false;

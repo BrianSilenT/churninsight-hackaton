@@ -9,7 +9,7 @@ export function useClientByDni(dni: string | null) {
       if (!dni) throw new Error("El número DNI es requerido");
       return await getClientByDni(dni);
     },
-    enabled: Boolean(dni),
+    enabled: !!dni, 
     retry: false,
   });
 }

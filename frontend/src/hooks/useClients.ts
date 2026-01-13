@@ -5,7 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 export function useClients() {
   return useQuery<ClientData[], Error>({
     queryKey: ["clients"],
-    queryFn: getClients,
+    queryFn: getClients, // React Query ejecutará la lógica de captura de errores definida en el service
     retry: false,
+    // Opcional: mantiene los datos anteriores mientras se carga la nueva consulta
+    placeholderData: (previousData) => previousData, 
   });
 }
