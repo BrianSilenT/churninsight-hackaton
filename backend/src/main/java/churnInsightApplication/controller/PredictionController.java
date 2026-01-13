@@ -1,32 +1,44 @@
 package churnInsightApplication.controller;
 
-
-import churnInsightApplication.dto.ClientRequest;
-import churnInsightApplication.dto.PrediccionResponse;
+import churnInsightApplication.dto.ClientData;
+import churnInsightApplication.service.ClientService;
+import ai.onnxruntime.OrtException;
 import churnInsightApplication.service.PredictionService;
-import jakarta.validation.Valid;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/predict")
 public class PredictionController {
 
-    private static final org.slf4j.Logger log =  LoggerFactory.getLogger(PredictionController.class);
+    private final PredictionService predictionService;
+    private final ClientService clientService;
 
-    @Autowired
-    private PredictionService predictionService;
+    public PredictionController(PredictionService predictionService, ClientService clientService) {
+        this.predictionService = predictionService;
+        this.clientService = clientService;
+    }
 
-    @PostMapping("/predict")
-    public PrediccionResponse predict(@Valid @RequestBody ClientRequest request){
-        log.info("POST /predict recibido para cliente con plan={} y retrasos={}",
-                request.getPlan(), request.getRetrasos_pago());
-        return predictionService.predecir(request);
+    @GetMapping("/{dni}")
+    public ResponseEntity<Map<String, Object>> predictByDni(@PathVariable String dni) throws OrtException {
+        // Obtener cliente desde ClientService
+        ClientData client = clientService.getClientByDni(dni);
+        client.calculateDerived(); // calcula supportUrgency y monthlySpend
+
+        // Ejecutar predicción con ONNX
+        float probability = predictionService.predict(client);
+
+        // Interpretar resultado
+        String prevision = (probability >= 0.5f) ? "Va a cancelar" : "Va a continuar";
+
+        // Armar respuesta en formato hackatón
+        Map<String, Object> response = new HashMap<>();
+        response.put("prevision", prevision);
+        response.put("probabilidad", probability);
+
+        return ResponseEntity.ok(response);
     }
 }

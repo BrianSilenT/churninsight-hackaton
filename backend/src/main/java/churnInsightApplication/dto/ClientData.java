@@ -1,7 +1,5 @@
 package churnInsightApplication.dto;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,11 +8,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientData {
-    private String dni;
-    private String nombre;
-    private String apellido;
-    private String plan;
-    private Integer tiempoContratoMeses;
-    private Integer retrasosPago;
-    private Double usoMensual;
+    private Integer age;
+    private Integer gender;
+    private Integer tenure;
+    private Integer usageFrequency;
+    private Integer supportCalls;
+    private Integer paymentDelay;
+    private Integer subscriptionType;
+    private Integer contractLength;
+    private Double totalSpend;
+    private Integer lastInteraction;
+
+    // Variables derivadas (calculadas en backend)
+    private Double supportUrgency;
+    private Double monthlySpend;
+
+    public void calculateDerived() {
+        if (tenure != null && supportCalls != null) {
+            this.supportUrgency = supportCalls / (double)(tenure + 1);
+        }
+        if (tenure != null && totalSpend != null) {
+            this.monthlySpend = totalSpend / (tenure + 1);
+        }
+    }
 }
