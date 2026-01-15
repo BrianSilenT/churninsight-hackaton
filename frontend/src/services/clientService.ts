@@ -2,9 +2,9 @@ import { ClientDataSchema, type ClientData } from "../schemas/client";
 import { api } from "../lib/api"; 
 import axios from "axios";
 
-export async function getClientByDni(dni: string): Promise<ClientData> {
+export async function getClientById(id: string): Promise<ClientData> {
   try {
-    const res = await api.get(`/clients/${encodeURIComponent(dni)}`);
+    const res = await api.get(`/clients/${encodeURIComponent(id)}`);
     // Validamos la data con el esquema de Zod
     return ClientDataSchema.parse(res.data);
   } catch (error) {

@@ -2,7 +2,7 @@ import type { ClientData } from "../types/client";
 
 export const mockClients: { [key: string]: ClientData } = {
   "12345678": {
-    dni: "12345678",
+    id: "12345678",
     nombreUsuario: "María González",
     tiempoContrato: "24 meses",
     retrasosPagos: 2,
@@ -11,7 +11,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 23,
   },
   "87654321": {
-    dni: "87654321",
+    id: "87654321",
     nombreUsuario: "Carlos Ramírez",
     tiempoContrato: "6 meses",
     retrasosPagos: 5,
@@ -20,7 +20,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 87,
   },
   "45678912": {
-    dni: "45678912",
+    id: "45678912",
     nombreUsuario: "Ana Martínez",
     tiempoContrato: "18 meses",
     retrasosPagos: 0,
@@ -29,7 +29,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 12,
   },
   "78912345": {
-    dni: "78912345",
+    id: "78912345",
     nombreUsuario: "Luis Fernández",
     tiempoContrato: "3 meses",
     retrasosPagos: 3,
@@ -38,7 +38,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 92,
   },
   "78914345": {
-    dni: "78914345",
+    id: "78914345",
     nombreUsuario: "Pepe Fernández",
     tiempoContrato: "3 meses",
     retrasosPagos: 3,
@@ -47,7 +47,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 3,
   },
   "78911345": {
-    dni: "78911345",
+    id: "78911345",
     nombreUsuario: "Luisa Roso",
     tiempoContrato: "3 meses",
     retrasosPagos: 6,
@@ -56,7 +56,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 20,
   },
   "78919345": {
-    dni: "78919345",
+    id: "78919345",
     nombreUsuario: "Maria Arias",
     tiempoContrato: "3 meses",
     retrasosPagos: 3,
@@ -65,7 +65,7 @@ export const mockClients: { [key: string]: ClientData } = {
     probabilidad: 45,
   },
   "72912345": {
-    dni: "72912345",
+    id: "72912345",
     nombreUsuario: "Laura Fernández",
     tiempoContrato: "3 meses",
     retrasosPagos: 3,

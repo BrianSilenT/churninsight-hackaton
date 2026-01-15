@@ -7,7 +7,7 @@ export async function startWorker() {
     const mswModule = await import("msw");
     const rest = (mswModule as any).rest ?? (mswModule as any).default?.rest;
     if (!rest) {
-      console.warn("MSW: 'rest' helper not found; skipping worker start in this environment.");
+      console.warn("MSW: No se encontró el helper'rest'; no se iniciará el worke de MSW en este entorno.");
       return;
     }
     const handlers = createHandlers(rest);
