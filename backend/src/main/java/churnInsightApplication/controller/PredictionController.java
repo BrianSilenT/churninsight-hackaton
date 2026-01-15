@@ -26,7 +26,7 @@ public class PredictionController {
     @GetMapping("/client/{id}")
     public ResponseEntity<Map<String, Object>> getFullAnalysis(@PathVariable String id) throws OrtException {
         // Buscamos al cliente en el CSV (vía ClientService)
-        ClientData client = clientService.getClientByDni(id);
+        ClientData client = clientService.getClientById(id);
 
         // Calculamos la predicción (vía PredictionService)
         float probability = predictionService.predict(client);

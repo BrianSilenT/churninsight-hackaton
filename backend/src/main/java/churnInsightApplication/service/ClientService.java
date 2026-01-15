@@ -63,7 +63,7 @@ public class ClientService {
         return List.copyOf(repository.values());
     }
 
-    public ClientData getClientByDni(String id) {
+    public ClientData getClientById(String id) {
         if (!repository.containsKey(id)) {
             throw new RuntimeException("Cliente con ID " + id + " no existe en el dataset.");
         }

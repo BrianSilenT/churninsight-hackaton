@@ -22,8 +22,8 @@ public class ClientController {
         return clientService.getAllClients();
     }
 
-    @GetMapping("/{dni}")
-    public ClientData getClientByDni(@PathVariable String dni) {
-        return clientService.getClientByDni(dni);
+    @GetMapping("/{id}")
+    public ClientData getClientById(@PathVariable String id) {
+        return clientService.getClientById(id);
     }
 }
