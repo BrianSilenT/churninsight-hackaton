@@ -1,69 +1,31 @@
-# 📦 Backend – ChurnInsight Hackathon
+# 🚀 ChurnInsight - Backend API
 
-Este módulo implementa el **backend en Spring Boot** para el proyecto *ChurnInsight*.  
-Su función principal es exponer un servicio REST que recibe datos de clientes y devuelve una predicción de churn.
+Servicio de predicción de abandono de clientes utilizando Spring Boot y ONNX Runtime (Machine Learning de alto rendimiento).
 
----
+## 🛠️ Tecnologías
 
-## 🚀 Instalación y ejecución
+* Java 17 & Spring Boot 3.2.2
+* ONNX Runtime: Inferencia del modelo de Data Science.
+* Maven: Gestión de dependencias.
+* Lombok: Reducción de código boilerplate.
 
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/BrianSilenT/churninsight-hackaton.git
-   cd churninsight-hackaton/backend
+## 📦 Instalación y Ejecución
 
-   📂 Estructura del proyect
+1. Asegúrate de tener el archivo `modelo_churn_final.onnx` y `customer_churn_dataset.csv` en `src/main/resources/`.
+2. Ejecuta el servidor:
+```bash
+./mvnw spring-boot:run
+```
 
-   backend/
- └── src/
-      ├── main/java/churnInsightApplication/
-      │    ├── controller/   → Controladores REST
-      │    ├── service/      → Lógica de negocio (PredictionService)
-      │    └── dto/          → Objetos de transferencia (ClientRequest, PrediccionResponse)
-      └── test/java/churnInsightApplication/
-           └── service/      → Pruebas unitarias
+3. La API estará disponible en `http://localhost:8080`.
 
-           🔗 Endpoints disponibles1. Predicción de churn- URL: /api/predict
-- Método: POST
-- Headers:
-Content-Type: application/json
+## 🛣️ Endpoints Principales
 
-- Request Body:
+* `GET /predict/client/{id}`: Devuelve información completa del cliente y su predicción (Ideal para el Frontend).
+* `POST /predict`: Recibe un JSON y devuelve la predicción (Cumplimiento de contrato MVP).
+* `GET /api/stats`: Estadísticas generales del dataset cargado.
 
-{
-  "tiempo_contrato_meses": 12,
-  "retrasos_pago": 2,
-  "uso_mensual": 14.5,
-  "plan": "Premium"
-}
+## 🧪 Casos de Prueba (Demo)
 
-- Response (actualmente respuesta fija)
-{
-  "prevision": "Va a continuar",
-  "probabilidad": 0.5
-}
-
-
-👉 Nota: por ahora el servicio devuelve siempre "va a continuar" con probabilidad 0.5
-Más adelante se integrará el modelo ONNX para predicciones reales.
-
-2. Health Check
-• 	URL: 
-• 	Método: 
-• 	Response:
-
-{
-  "status": "UP"
-}
-
-🧪 Pruebas
-Con Postman
-1. 	Levantar el backend ().
-2. 	Enviar un  a  con el JSON de ejemplo.
-3. 	Validar que la respuesta sea la esperada.
-4. 	Verificar el estado del servidor con
-
-
-Con JUnit
-(Cpdigo implementado en la nueva carpeta)
-
+1. Cliente en Riesgo (ID 1): `GET http://localhost:8080/predict/client/1`
+2. Cliente Leal (ID 3): `GET http://localhost:8080/predict/client/3`

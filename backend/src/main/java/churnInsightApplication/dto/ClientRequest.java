@@ -1,20 +1,34 @@
 package churnInsightApplication.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
+    @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ClientRequest {
-    @NotNull
+    @NotNull(message = "El campo 'tiempo_contrato_meses' es obligatorio")
+    @Min(value = 1, message = "El contrato debe ser al menos un mes")
+    @JsonProperty("tiempo_contrato_meses")
     private Integer tiempo_contrato_meses;
 
-    @NotNull
+    @NotNull(message = "El campo 'retrasos_pago' es obligatorio")
+    @Min(value = 0, message = "Los retrasos de pago no pueden ser negativos")
+    @JsonProperty("retrasos_pago")
     private Integer retrasos_pago;
 
-    @NotNull
+    @NotNull(message = "El campo 'uso_mensual' es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El uso mensual debe ser mayor a 0")
+    @JsonProperty("uso_mensual")
     private Double uso_mensual;
 
-    @NotNull
+    @NotBlank(message = "El campo 'plan' es obligatorio")
+    @JsonProperty("plan")
     private String plan;
-
 }

@@ -1,25 +1,58 @@
 package churnInsightApplication.controller;
 
-
-import churnInsightApplication.dto.ClientRequest;
-import churnInsightApplication.dto.PrediccionResponse;
+import churnInsightApplication.dto.ClientData;
+import churnInsightApplication.service.ClientService;
+import ai.onnxruntime.OrtException;
 import churnInsightApplication.service.PredictionService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/predict")
 public class PredictionController {
 
-    @Autowired
-    private PredictionService predictionService;
+    private final PredictionService predictionService;
+    private final ClientService clientService;
 
-    @PostMapping("/predict")
-    public PrediccionResponse predict(@Valid @RequestBody ClientRequest request){
-        return predictionService.predecir(request);
+    public PredictionController(PredictionService predictionService, ClientService clientService) {
+        this.predictionService = predictionService;
+        this.clientService = clientService;
+    }
+
+    @GetMapping("/client/{id}")
+    public ResponseEntity<Map<String, Object>> getFullAnalysis(@PathVariable String id) throws OrtException {
+        // Buscamos al cliente en el CSV (vía ClientService)
+        ClientData client = clientService.getClientByDni(id);
+
+        // Calculamos la predicción (vía PredictionService)
+        float probability = predictionService.predict(client);
+        String prevision = (probability >= 0.5f) ? "Va a cancelar" : "Va a continuar";
+
+        // Construimos la respuesta "híbrida" para el Frontend
+        Map<String, Object> response = new HashMap<>();
+
+        // Sección: Información del Cliente
+        Map<String, Object> infoCliente = new HashMap<>();
+        infoCliente.put("id", id);
+        infoCliente.put("nombre", "Usuario " + id);
+        infoCliente.put("tiempoContrato", client.getContractLength());
+        infoCliente.put("retrasosPagos", client.getPaymentDelay());
+        infoCliente.put("usoApp", client.getUsageFrequency());
+        infoCliente.put("plan", client.getSubscriptionType() == 3 ? "Premium"
+                : client.getSubscriptionType() == 2 ? "Standard" : "Basic");
+
+        // Sección: Predicción
+        Map<String, Object> prediccion = new HashMap<>();
+        prediccion.put("probabilidad", (Math.round(probability * 100.0) / 100.0));
+        prediccion.put("resultado", prevision);
+
+        response.put("cliente", infoCliente);
+        response.put("analisis", prediccion);
+
+        return ResponseEntity.ok(response);
     }
 }
