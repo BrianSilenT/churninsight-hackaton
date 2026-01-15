@@ -1,15 +1,15 @@
-import { getClientByDni } from "../services/clientService";
+import { getClientById } from "../services/clientService";
 import type { ClientData } from "../schemas/client";
 import { useQuery } from "@tanstack/react-query";
 
-export function useClientByDni(dni: string | null) {
+export function useClientById(id: string | null) {
   return useQuery<ClientData, Error>({
-    queryKey: ["client", dni],
+    queryKey: ["client", id],
     queryFn: async () => {
-      if (!dni) throw new Error("El número DNI es requerido");
-      return await getClientByDni(dni);
+      if (!id) throw new Error("El número ID es requerido");
+      return await getClientById(id);
     },
-    enabled: !!dni, 
+    enabled: !!id, 
     retry: false,
   });
 }

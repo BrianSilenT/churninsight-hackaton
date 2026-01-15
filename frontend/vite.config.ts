@@ -5,15 +5,6 @@
 
   export default defineConfig({
     plugins: [react()],
-    // server:{
-    //   proxy:{
-    //     "/api":{
-    //       target:"",
-    //       changeOrigin : true,
-    //       secure: false
-    //     }
-    //   }
-    // },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

@@ -3,11 +3,11 @@ import { mockClients } from "./mockClients";
 //Simula API como si fuera un servidor real
 export function createHandlers(rest: any) {
   return [
-    rest.get("/clients/:dni", (req: any, res: any, ctx: any) => {
-      const { dni } = req.params as { dni: string };
-      const client = mockClients[dni];
+    rest.get("/clients/:id", (req: any, res: any, ctx: any) => {
+      const { id } = req.params as { id: string };
+      const client = mockClients[id];
       if (!client) return res(ctx.status(404), 
-                              ctx.json({ message: "DNI no encontrada" }));
+                              ctx.json({ message: "ID no encontrada" }));
       return res(ctx.status(200), ctx.json(client));
     }),
 
