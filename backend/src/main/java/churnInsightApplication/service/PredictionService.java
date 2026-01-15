@@ -2,33 +2,28 @@ package churnInsightApplication.service;
 
 import churnInsightApplication.dto.ClientData;
 import ai.onnxruntime.*;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
+import jakarta.annotation.PreDestroy;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PredictionService {
 
     private final OrtEnvironment env;
-    private OrtSession session;
-    private final String modelPath;
+    private final OrtSession session;
 
-    public PredictionService(@Value("${model.onnx.path}") String modelPath) {
+    public PredictionService(@Value("${model.onnx.path}") String modelPath) throws OrtException {
         this.env = OrtEnvironment.getEnvironment();
-        this.modelPath = modelPath;
-    }
-
-    private void initSession() throws OrtException {
-        if (session == null) {
-            session = env.createSession(modelPath);
-        }
+        // Cargamos la sesión una sola vez al instanciar el servicio
+        this.session = env.createSession(modelPath, new OrtSession.SessionOptions());
+        System.out.println("✅ Modelo ONNX cargado exitosamente desde: " + modelPath);
     }
 
     public float predict(ClientData client) throws OrtException {
-        initSession();
-
+        // Preparación del vector de entrada (11 features)
         float[] features = {
                 client.getAge().floatValue(),
                 client.getGender().floatValue(),
@@ -39,35 +34,38 @@ public class PredictionService {
                 client.getContractLength().floatValue(),
                 client.getTotalSpend().floatValue(),
                 client.getLastInteraction().floatValue(),
-                (float)(client.getSupportCalls() / (client.getTenure() + 1.0)),
-                (float)(client.getTotalSpend() / (client.getTenure() + 1.0))
+                client.getSupportUrgency().floatValue(),
+                client.getMonthlySpend().floatValue()
         };
 
-        OnnxTensor inputTensor = OnnxTensor.createTensor(env, new float[][]{features});
+        try (OnnxTensor inputTensor = OnnxTensor.createTensor(env, new float[][] { features })) {
+            try (OrtSession.Result result = session.run(Collections.singletonMap("float_input", inputTensor))) {
 
-        try (OrtSession.Result result = session.run(
-                java.util.Collections.singletonMap("float_input", inputTensor))) {
+                // El índice 1 contiene las probabilidades.
+                // En ONNX Runtime, esto devuelve una lista de OnnxValue.
+                List<?> outputList = (List<?>) result.get(1).getValue();
 
-            // 👇 Aquí agregas la línea de debug
-            Object rawOutput = result.get(0).getValue();
-            System.out.println("Salida ONNX: " + rawOutput.getClass());
+                // Extraemos el primer elemento (para nuestra única fila de datos)
+                // El objeto es un OnnxMap, debemos tratarlo como tal.
+                ai.onnxruntime.OnnxMap onnxMap = (ai.onnxruntime.OnnxMap) outputList.get(0);
 
-            // Si quieres ver valores concretos:
-            if (rawOutput instanceof float[][]) {
-                float[][] output = (float[][]) rawOutput;
-                System.out.println("Valores: " + java.util.Arrays.toString(output[0]));
-                return output[0][0]; // o output[0][1] si es probabilidad de churn
-            } else if (rawOutput instanceof float[]) {
-                float[] output = (float[]) rawOutput;
-                System.out.println("Valores: " + java.util.Arrays.toString(output));
-                return output[0];
-            } else if (rawOutput instanceof long[]) {
-                long[] output = (long[]) rawOutput;
-                System.out.println("Valores: " + java.util.Arrays.toString(output));
-                return (float) output[0];
-            } else {
-                throw new RuntimeException("Tipo de salida inesperado: " + rawOutput.getClass());
+                // Convertimos el OnnxMap a un Map de Java real
+                @SuppressWarnings("unchecked")
+                Map<Long, Float> probabilities = (Map<Long, Float>) onnxMap.getValue();
+
+                // Obtenemos la probabilidad de la clase 1 (Churn)
+                float probChurn = probabilities.get(1L);
+
+                System.out.println("✅ Inferencia exitosa. Probabilidad: " + probChurn);
+                return probChurn;
             }
         }
+    }
+
+    @PreDestroy
+    public void close() throws OrtException {
+        // Cerrar recursos al apagar la app
+        session.close();
+        env.close();
     }
 }
