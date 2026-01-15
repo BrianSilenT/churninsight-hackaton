@@ -54,7 +54,7 @@ backend/
   json
   [
     {
-      "dni": "12345678",
+      "id": "12345678",
       "nombreUsuario": "Juan Pérez",
       "planType": "Premium",
       "tiempoContrato": "12 meses"
@@ -67,7 +67,7 @@ backend/
 - **Respuesta ejemplo**:
   json
   {
-    "dni": "12345678",
+    "id": "12345678",
     "nombreUsuario": "Juan Pérez",
     "vaCancelar": true,
     "probabilidad": 0.87
