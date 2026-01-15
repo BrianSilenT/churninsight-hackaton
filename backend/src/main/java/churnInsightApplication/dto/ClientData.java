@@ -18,17 +18,15 @@ public class ClientData {
     private Integer contractLength;
     private Double totalSpend;
     private Integer lastInteraction;
-
-    // Variables derivadas (calculadas en backend)
     private Double supportUrgency;
     private Double monthlySpend;
 
     public void calculateDerived() {
         if (tenure != null && supportCalls != null) {
-            this.supportUrgency = supportCalls / (double)(tenure + 1);
+            this.supportUrgency = supportCalls / (double) (tenure + 1);
         }
         if (tenure != null && totalSpend != null) {
-            this.monthlySpend = totalSpend / (tenure + 1);
+            this.monthlySpend = totalSpend / (double) (tenure + 1);
         }
     }
 }
