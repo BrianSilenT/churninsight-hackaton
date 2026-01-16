@@ -3,7 +3,7 @@
 
 **Descripción breve**
 
-Interfaz de usuario para el reporte y análisis de cancelaciones (churn). Esta aplicación está construida con React + TypeScript y se configura con Vite. Incluye componentes reutilizables (en `src/components/ui`) para crear vistas interactivas, gráficos y formularios.
+Interfaz de usuario profesional para el reporte y análisis de cancelaciones (churn). Esta aplicación está construida con **React + TypeScript** y configurada con **Vite**. Utiliza una arquitectura modular que separa la lógica de servicios, esquemas de validación y componentes UI reutilizables para garantizar escalabilidad y mantenibilidad.
 
 ---
 
@@ -17,29 +17,37 @@ Interfaz de usuario para el reporte y análisis de cancelaciones (churn). Esta a
 
 ## ✨ Características principales
 
-- Componentes UI reutilizables (basados en Radix y librerías auxiliares).
-- Visualizaciones con `recharts` para análisis rápidos.
-- Validación y formularios con `react-hook-form`.
-- Notificaciones y toasts (Sonner) y utilidades de accesibilidad.
+- **Componentes UI Reutilizables:** Basados en Radix UI y Tailwind CSS (Shadcn/UI).
+- **API Mocking:** Entorno de desarrollo independiente mediante **MSW (Mock Service Worker)** para interceptar peticiones de red.
+- **Validación de Datos:** Gestión de formularios y validación de esquemas con **Zod**.
+- **Custom Hooks:** Lógica de negocio y fetching de datos centralizada (ej. `useClients`).
+- **Arquitectura Limpia:** Separación estricta entre presentación (UI), lógica (Hooks) y datos (Services).
 
 ---
 
 ## 🧭 Estructura del proyecto (resumen)
 
-```
+```text
 / (root)
   ├─ index.html
-  ├─ package.json            # scripts y dependencias
-  ├─ tsconfig.json
-  ├─ vite.config.ts
+  ├─ package.json            # Scripts y dependencias
+  ├─ tsconfig.json           # Configuración de TypeScript
+  ├─ vite.config.ts          # Configuración de Vite
+  ├─ tailwind.config.ts      # Configuración de estilos (Tailwind)
   └─ src/
-     ├─ main.tsx             # punto de entrada
-     ├─ App.tsx              # componente raíz
-     ├─ index.css
+     ├─ main.tsx             # Punto de entrada principal
+     ├─ App.tsx              # Componente raíz y Layout
      ├─ components/
-     │   └─ ui/              # componentes UI reutilizables
-     └─ styles/
-         └─ globals.css      # estilos globales
+     │  └─ ui/               # Componentes atómicos (botones, diálogos, etc.)
+     ├─ hooks/               # Custom hooks para lógica de estado
+     ├─ lib/                 # Configuración de librerías (API client, utils)
+     ├─ mocks/               # Configuración de MSW (Handlers, browser y server)
+     ├─ schemas/             # Esquemas de validación de datos (Zod)
+     ├─ services/            # Lógica de peticiones API y servicios (.test.ts incluido)
+     ├─ styles/
+     │  └─ globals.css       # Estilos globales y variables de CSS
+     ├─ types/               # Interfaces y definiciones de TypeScript
+     └─ utils.ts             # Funciones de utilidad general
 ```
 
 **Archivos clave:**
@@ -51,11 +59,20 @@ Interfaz de usuario para el reporte y análisis de cancelaciones (churn). Esta a
 
 ## 🛠️ Tecnologías
 
-- React 18 + TypeScript
-- Vite (bundler de desarrollo)
-- Radix UI (componentes accesibles)
-- Recharts (gráficas)
-- Sonner (notificaciones)
+- Core: React 18 + TypeScript + Vite
+- Estilos: Tailwind CSS,  Lucide React(iconos)
+- UI & Accesibilidad: Radix UI, Soner(Notificaciones)
+- Manejo de datos: MSW (Mocking), Zos (Validación)
+
+---
+
+## Requisitos Previos:
+
+Antes de ejecutar el proyecto en local es necesario contar con lo siguiente:
+
+- Node:  versión 24.11.0
+- npm: 11.6.1
+- nvm: 1.2.2
 
 ---
 
@@ -64,8 +81,8 @@ Interfaz de usuario para el reporte y análisis de cancelaciones (churn). Esta a
 1. Clona el repositorio:
 
 ```bash
-git clone <url-del-repositorio>
-cd <nombre-del-proyecto>
+git clone [https://github.com/tu-usuario/churninsight.git](https://github.com/tu-usuario/churninsight.git)
+cd churninsight
 ```
 
 2. Instala dependencias:
@@ -79,7 +96,7 @@ npm install
 
 ```bash
 npm run dev
-# abre http://localhost:5173 (u otra URL que muestre Vite)
+# abre http://localhost:3000 
 ```
 
 4. Compila para producción:
@@ -103,10 +120,11 @@ npm run lint:ci      # Lint para CI (falla si hay warnings)
 - Crea una branch por feature/bug: `git checkout -b feature/nombre`
 - Haz commits pequeños y descriptivos.
 - Asegúrate de ejecutar `npm run lint` y `npm run type-check` antes de crear un PR.
+- Abre un Pull Request describiendo tus cambios 
 
 ---
 
-> **Nota:** No hay variables de entorno obligatorias en este repositorio (si tu integración requiere API keys u otros secretos, agrégalo en `.env` y documenta los nombres aquí).
+> **Nota:** El proyecto utiliza un archivo .env.development. Asegúrate de configurar las variables necesarias para el entorno local.
 
 ---
 

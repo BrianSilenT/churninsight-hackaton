@@ -1,93 +1,98 @@
-# Backend – ChurnInsight Hackathon
+# 📌 Backend – Churn Insight
 
 ## 🚀 Descripción
-Este backend está desarrollado en **Spring Boot** y expone servicios REST para la predicción de churn de clientes.  
-Incluye integración con modelos ONNX, separación de DTOs y controladores con manejo robusto de errores.
+Este módulo corresponde al **backend del proyecto Churn Insight**, desarrollado en **Spring Boot**.  
+Su objetivo es proveer servicios REST para:
+- Listar clientes (`/clients`).
+- Obtener predicciones de cancelación (`/predict/{dni}`).
+- Calcular variables derivadas para análisis de churn.
+
+
+## 📂 Estructura del proyecto
+backend/
+ ├── src/main/java/churnInsightApplication/
+ │    ├── controller/       # Controladores REST
+ │    ├── service/          # Lógica de negocio
+ │    ├── dto/              # Data Transfer Objects (ClientData, ClientPredictionResponse)
+ │    ├── model/            # Modelos internos
+ │    └── config/           # Configuración de Spring Boot
+ ├── src/test/java/         # Pruebas unitarias e integración
+ ├── pom.xml                # Dependencias Maven
+ └── README.md              # Documentación del módulo
+
+
+## ⚙️ Requisitos previos
+- **Java 17+**
+- **Maven 3.8+**
+- **Spring Boot 3.x**
+- (Opcional) Postman o cURL para pruebas de endpoints
+
+
+## ▶️ Ejecución local
+1. Clonar el monorepo:
+   bash
+   git clone https://github.com/tu-org/churn-insight.git
+   cd churn-insight/backend
+   
+2. Compilar y ejecutar:
+   bash
+   mvn clean install
+   mvn spring-boot:run
+   
+3. El backend estará disponible en:
+   
+   http://localhost:8080
 
 
 
-## 📂 Estructura principal
-- `src/main/java/.../controller` → Controladores REST (`PredictionController`, `ClientController`)  
-- `src/main/java/.../service` → Lógica de negocio (`PredictionService`)  
-- `src/main/resources` → Configuración y modelos ONNX  
-- `src/test/java/...` → Pruebas unitarias e integración  
 
+## 📡 Endpoints principales
 
-
-## ⚙️ Endpoints principales
-### 🔹 PredictionController
-- `POST /api/predict`  
-  **Entrada:** JSON con datos del cliente.  
-  **Salida:** Predicción de churn (`true/false`) y score de probabilidad.  
-  **Errores manejados:**  
-  - `400 Bad Request` → Datos incompletos o inválidos.  
-  - `500 Internal Server Error` → Error al cargar modelo o procesar predicción.  
-
-### 🔹 ClientController
-- `GET /api/clients` → Lista todos los clientes disponibles.  
-- `GET /api/clients/{id}` → Obtiene detalle de un cliente específico.  
-
-
-
-## 🧪 Pruebas en Postman
-Durante la validación se realizaron pruebas de integración con **Postman**:
-
-### 1. Predicción de churn
-- **Endpoint:** `POST /api/predict`  
-- **Body (JSON ejemplo):**
-  ```json
-  {
-    "age": 35,
-    "tenure": 5,
-    "balance": 25000,
-    "products": 2,
-    "hasCreditCard": true,
-    "isActiveMember": true,
-    "estimatedSalary": 50000
-  }
-  
-- **Resultado esperado:**  
-  json
-  {
-    "churn": false,
-    "score": 0.23
-  }
-  
-
-### 2. Listado de clientes
-- **Endpoint:** `GET /api/clients`  
-- **Resultado esperado:**  
+### `GET /clients`
+- **Descripción**: Devuelve la lista de clientes disponibles.
+- **Respuesta ejemplo**:
   json
   [
     {
-      "id": 1,
-      "name": "Juan Pérez",
-      "age": 30
-    },
-    {
-      "id": 2,
-      "name": "María López",
-      "age": 42
+      "id": "12345678",
+      "nombreUsuario": "Juan Pérez",
+      "planType": "Premium",
+      "tiempoContrato": "12 meses"
     }
   ]
   
 
-### 3. Detalle de cliente
-- **Endpoint:** `GET /api/clients/1`  
-- **Resultado esperado:**  
+### `GET /predict/{dni}`
+- **Descripción**: Devuelve la predicción de cancelación para un cliente.
+- **Respuesta ejemplo**:
   json
   {
-    "id": 1,
-    "name": "Juan Pérez",
-    "age": 30,
-    "tenure": 3,
-    "balance": 15000
+    "id": "12345678",
+    "nombreUsuario": "Juan Pérez",
+    "vaCancelar": true,
+    "probabilidad": 0.87
   }
+
+
+
+## 🧪 Pruebas
+- Ejecutar pruebas unitarias:
+  bash
+  mvn test
+  
+- Validar endpoints con **Postman** o **cURL**:
+  bash
+  curl http://localhost:8080/clients
+  curl http://localhost:8080/predict/12345678
   
 
-## ✅ Checklist de validación
-- Endpoints responden con códigos HTTP correctos (`200`, `400`, `500`).  
-- Predicciones reproducibles con el modelo ONNX cargado desde `resources`.  
-- Manejo de errores probado en Postman con entradas inválidas.  
-- Documentación de pruebas incluida en este README.  
 
+
+## 📌 Roadmap Backend
+- [x] Definición de DTO `ClientData`.
+- [x] Implementación de variables derivadas (`supportUrgency`, `monthlySpend`).
+- [x] Endpoints básicos (`/clients`, `/predict/{dni}`).
+- [ ] Integración con frontend vía proxy.
+- [ ] Documentación de despliegue en producción.
+
+---
