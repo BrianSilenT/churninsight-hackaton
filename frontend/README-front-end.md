@@ -48,6 +48,7 @@ Interfaz de usuario profesional para el reporte y análisis de cancelaciones (ch
      │  └─ globals.css       # Estilos globales y variables de CSS
      ├─ types/               # Interfaces y definiciones de TypeScript
      └─ utils.ts             # Funciones de utilidad general
+```
 
 **Archivos clave:**
 - `src/main.tsx`: monta la aplicación en el DOM.
