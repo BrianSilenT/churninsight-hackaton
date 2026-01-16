@@ -1,5 +1,5 @@
 import { Search, Moon, Sun, RotateCcw, ChevronDown } from "lucide-react";
-import { useClientByDni } from "./hooks/useClient";
+import { useClientById } from "./hooks/useClient";
 import type { ClientData } from "./types/client";
 import { mockClients } from "./mocks/mockClients";
 import { useState, useEffect } from "react";
@@ -7,27 +7,27 @@ import type { KeyboardEvent } from "react";
 
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [searchDni, setSearchDni] = useState<string | null>(null);
+  const [darkMode, setDarkMode]               = useState(false);
+  const [searchDni, setSearchDni]             = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
-  const [typedDni, setTypedDni] = useState("");       
-  const [selectInput, setSelectInput] = useState(""); 
-  const [selectedDni, setSelectedDni] = useState<string | null>(null);
-  const [showList, setShowList] = useState(false);
+  const [typedId, setTypedId]               = useState("");       
+  const [selectInput, setSelectInput]         = useState(""); 
+  const [selectedId, setSelectedId]         = useState<string | null>(null);
+  const [showList, setShowList]               = useState(false);
 
-  const [mocksActive, setMocksActive] = useState(false);
+  const [mocksActive, setMocksActive]         = useState(false);
 
 
   // CONSULTA DE CLIENTE POR API si y solo si searchDni existe
 
-  const { data: queriedClient, isLoading, error } = useClientByDni(searchDni);
+  const { data: queriedClient, isLoading, error } = useClientById(searchDni);
 
   // SI API responde se utiliza ese ClientRequest, sino se usa el mock como simulación
 
   const clientData =
   (queriedClient ??
     (searchAttempted && !isLoading && error
-      ? mockClients[selectedDni ?? ""]
+      ? mockClients[selectedId ?? ""]
       : null)) as ClientData | null;
 
   const autocompleteSource: ClientData[] = queriedClient
@@ -37,7 +37,7 @@ export default function App() {
   : Object.values(mockClients);
 
   const filteredUsers = autocompleteSource.filter((u) =>
-  u.dni.includes(selectInput) ||
+  u.id.includes(selectInput) ||
   u.nombreUsuario
     ?.toLowerCase()
     .includes(selectInput.toLowerCase())
@@ -80,26 +80,26 @@ export default function App() {
 
 
     const handleSearch = () => {
-    const dniToSearch = selectedDni ?? typedDni.trim();
+    const dniToSearch = selectedId ?? typedId.trim();
     if (!dniToSearch) return;
 
-    setSelectedDni(dniToSearch);
+    setSelectedId(dniToSearch);
     setSearchAttempted(true);
     setSearchDni(dniToSearch);
   };
 
   const handleReset = () => {
-    setTypedDni("");        
+    setTypedId("");        
     setSelectInput("");       
-    setSelectedDni(null);
+    setSelectedId(null);
     setSearchDni(null);
     setSearchAttempted(false);
     setShowList(false);
   };
 
-  const handleSelectUser = (dni: string) => {
-    setSelectInput(dni);   
-    setSelectedDni(dni);   
+  const handleSelectUser = (id: string) => {
+    setSelectInput(id);   
+    setSelectedId(id);   
     setShowList(false);    
   };
 
@@ -178,10 +178,10 @@ export default function App() {
           <div className="flex gap-3">
             <input
               type="text"
-              value={typedDni}
-              onChange={(e) => setTypedDni(e.target.value)}
+              value={typedId}
+              onChange={(e) => setTypedId(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Ingrese el DNI del cliente"
+              placeholder="Ingrese el ID del cliente"
               className={`flex-1 px-4 py-3 rounded-lg border transition-colors ${
                 darkMode
                   ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -225,7 +225,7 @@ export default function App() {
                 type="text"
                 value={selectInput}
                 readOnly
-                placeholder="Seleccione el DNI del cliente"
+                placeholder="Seleccione el ID del cliente"
                 className={`w-full px-4 pr-12 py-3 rounded-lg border cursor-pointer
                   transition-all focus:outline-none focus:ring-2 focus:ring-blue-500
                   ${
@@ -271,8 +271,8 @@ export default function App() {
               ) : (
                 filteredUsers.map((user) => (
                   <li
-                    key={user.dni}
-                    onClick={() => handleSelectUser(user.dni)}
+                    key={user.id}
+                    onClick={() => handleSelectUser(user.id)}
                     className={`group flex justify-between items-center px-4 py-3 
                       border-b last:border-none transition-all
                       ${darkMode 
@@ -281,7 +281,7 @@ export default function App() {
                       }`}
                     style={{ cursor: 'pointer', userSelect: 'none' }}
                   >
-                    <span className="font-bold pointer-events-none">{user.dni}</span>
+                    <span className="font-bold pointer-events-none">{user.id}</span>
                     <span className="text-xs opacity-60 pointer-events-none uppercase">
                       {user.nombreUsuario}
                     </span>
@@ -295,7 +295,7 @@ export default function App() {
           
           {searchAttempted && !clientData && (
             <p className="mt-3 text-red-800">
-              No se encontró ningún cliente con el DNI
+              No se encontró ningún cliente con el ID
               ingresado. Prueba con un usuario que exista
             </p>
           )}
@@ -313,7 +313,7 @@ export default function App() {
                 darkMode ? "text-gray-200" : "text-gray-800"
               }`}
             >
-              Información del Cliente
+              Información del Cliente:
             </h2>
             <table className="w-full">
               <thead>
@@ -331,7 +331,7 @@ export default function App() {
                         : "text-gray-700"
                     }`}
                   >
-                    DNI
+                    ID
                   </th>
                   <th
                     className={`px-4 py-3 text-left ${
@@ -367,15 +367,6 @@ export default function App() {
                         : "text-gray-700"
                     }`}
                   >
-                    Uso de App
-                  </th>
-                  <th
-                    className={`px-4 py-3 text-left ${
-                      darkMode
-                        ? "text-gray-300"
-                        : "text-gray-700"
-                    }`}
-                  >
                     Tipo de Plan
                   </th>
                 </tr>
@@ -395,7 +386,7 @@ export default function App() {
                         : "text-gray-900"
                     }`}
                   >
-                    {clientData.dni}
+                    {clientData.id}
                   </td>
                   <td
                     className={`px-4 py-4 ${
@@ -427,15 +418,6 @@ export default function App() {
                     >
                       {clientData.retrasosPagos}
                     </span>
-                  </td>
-                  <td
-                    className={`px-4 py-4 ${
-                      darkMode
-                        ? "text-gray-200"
-                        : "text-gray-900"
-                    }`}
-                  >
-                    {clientData.usoApp}
                   </td>
                   <td
                     className={`px-4 py-4 ${
@@ -490,7 +472,7 @@ export default function App() {
               >
                 Nombre de usuario:{" "}
                 <strong>{clientData.nombreUsuario}</strong>,
-                DNI: <strong>{clientData.dni}</strong>,{" "}
+                ID: <strong>{clientData.id}</strong>,{" "}
                 <strong>
                   {clientData.vaCancelar
                     ? "va a cancelar"
@@ -534,8 +516,8 @@ export default function App() {
                 darkMode ? "text-blue-300" : "text-blue-700"
               }`}
             >
-              💡 Prueba buscando con estos DNIs de ejemplo:
-              12345678, 87654321, 45678912, o 78912345
+              💡 En caso de probar y no conocer un ID válido, selecciona el campo de 
+                  "Seleccione el ID del cliente" y podrás seleccionar cualquier opción
             </p>
           </div>
         )}

@@ -1,9 +1,8 @@
 export interface ClientData {
-  dni: string;
+  id: string;
   nombreUsuario: string;
   tiempoContrato: string;
   retrasosPagos: number;
-  usoApp: string;
   planType: string;
   vaCancelar: boolean;
   probabilidad: number;
