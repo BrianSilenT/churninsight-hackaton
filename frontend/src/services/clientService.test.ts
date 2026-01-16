@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
 import { rest, RestRequest, ResponseComposition, RestContext } from "msw";
-import { getClientByDni, getClients } from "./clientService";
+import { getClientById, getClients } from "./clientService";
 import { server } from "../mocks/server";
 
 beforeAll(() => server.listen());
@@ -9,7 +9,7 @@ afterAll(() => server.close());
 
 describe("clientService", () => {
   it("fetches client by id", async () => {
-    const client = await getClientByDni("12345678");
+    const client = await getClientById("12345678");
     expect(client.id).toBe("12345678");
     expect(client.nombreUsuario).toBe("María González");
   });
@@ -28,6 +28,6 @@ describe("clientService", () => {
       }) as any
     );
 
-    await expect(getClientByDni("12345678")).rejects.toThrow();
+    await expect(getClientById("12345678")).rejects.toThrow();
   });
 });

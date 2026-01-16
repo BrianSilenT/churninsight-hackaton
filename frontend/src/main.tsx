@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
   import { createRoot } from "react-dom/client";
   import App from "./App";
@@ -6,8 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
-if (import.meta.env.DEV) {
-  // Arranca MSW sol en entorno de desarrollo para pruebas
+if (import.meta.env.VITE_USE_MOCK?.toLowerCase() === "true") {
   import("./mocks/browser").then(({ startWorker }) => startWorker());
 }
 
