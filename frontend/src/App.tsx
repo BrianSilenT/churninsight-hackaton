@@ -490,9 +490,16 @@ export default function App() {
                   No hay predicción disponible para este ID.
                 </p>
               )
-            )}
+            )}<br></br>
             
             {/* Estadísticas */}
+            <h2
+              className={`mb-4 ${
+                darkMode ? "text-gray-200" : "text-gray-800"
+              }`}
+            >
+              Estadísticas Generales:
+            </h2>
             <section className={`mt-6 p-4 rounded-lg border-t ${darkMode ? "bg-gray-800/50 border-gray-700" : "bg-gray-50 border-gray-100"}`}>
                 <p className="text-sm opacity-80">
                   Total evaluados en sistema: <strong>{totalEvaluados}</strong> <br /> 
