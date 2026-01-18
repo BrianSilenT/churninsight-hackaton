@@ -476,7 +476,7 @@ export default function App() {
                 } 
                 <div>
                   <p className="text-lg">
-                    Estado: <strong>{prediction.prevision === "Churn" ? "Riesgo de Abandono" : "Cliente Fiel"}</strong>
+                    Estado: <strong>{prediction.prevision}</strong>
                   </p>
                   <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
                     Probabilidad calculada: <strong className={darkMode ? "text-white" : "text-black"}>{prediction.probabilidad}%</strong>
