@@ -29,15 +29,16 @@ export default function App() {
   // SI API responde se utiliza ese ClientRequest, sino se usa el mock como simulación
 
   const clientData =
-  (queriedClient ??
-    (searchAttempted && !isLoading && error
-      ? mockClients[selectedId ?? ""]
-      : null)) as ClientData | null;
+    (queriedClient ??
+      (searchAttempted && !isLoading && error && searchId
+        ? mockClients[searchId] 
+        : null)) as ClientData | null;
 
-  const prediction = (predictionData ?? 
-    (searchAttempted && clientData 
-      ? mockPredictions[clientData.id] 
-      : null)) as PredictionResponse | null;
+  const prediction = 
+    (predictionData ?? 
+      (searchAttempted && clientData 
+        ? mockPredictions[clientData.id] 
+        : null)) as PredictionResponse | null;
 
   const autocompleteSource = Object.values(mockClients);
 
@@ -108,7 +109,7 @@ export default function App() {
 
   const totalEvaluados = Object.keys(mockPredictions).length;
   const tasaCancelacion = (
-    Object.values(mockPredictions).filter((c) => c.prevision === "Churn")
+    Object.values(mockPredictions).filter((c) => c.prevision === "Va a cancelar")
       .length / totalEvaluados
   ).toFixed(2);
 
