@@ -458,7 +458,7 @@ export default function App() {
           
             {prediction ? (
               <div className={`p-5 rounded-xl border-l-8 flex items-start gap-4 transition-colors duration-300 ${
-                prediction.prevision === "Churn" 
+                prediction.prevision === "Va a cancelar" 
                   ? darkMode 
                   ? "bg-red-900/20 border-red-500 text-red-200" 
                   : "bg-red-50 border-red-500 text-red-900"    
