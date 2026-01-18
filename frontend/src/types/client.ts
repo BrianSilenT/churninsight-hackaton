@@ -1,9 +1,15 @@
 export interface ClientData {
   id: string;
-  nombreUsuario: string;
-  tiempoContrato: string;
-  retrasosPagos: number;
-  planType: string;
-  vaCancelar: boolean;
-  probabilidad: number;
+  age: number;        
+  gender: number;
+  tenure: number;
+  usageFrequency: number;
+  supportCalls: number;
+  paymentDelay: number;
+  subscriptionType: number;
+  contractLength: number;
+  totalSpend: number;
+  lastInteraction: number;
+  supportUrgency: number;
+  monthlySpend: number;
 }
