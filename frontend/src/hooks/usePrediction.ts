@@ -5,7 +5,10 @@ import type { PredictionResponse } from "../schemas/prediction.schema";
 export function usePrediction(id?: string) {
   return useQuery<PredictionResponse, Error>({
     queryKey: ["prediction", id],
-    queryFn: () => getPredictionByClientId(id!),
+    queryFn: async () => {
+      if (!id) throw new Error("ID requerido para la predicción");
+      return await getPredictionByClientId(id);
+    },
     enabled: !!id,
   });
 }

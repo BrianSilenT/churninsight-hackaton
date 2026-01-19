@@ -54,7 +54,9 @@ export default function App() {
             <input
               type="text"
               value={typedId}
-              onChange={(e) => setTypedId(e.target.value)}
+              onChange={(e) => {
+                setTypedId(e.target.value);
+              }}
               onKeyDown={handleKeyPress}
               placeholder="Ejemplo: 1, 5, 100..."
               className={`flex-1 px-4 py-3 rounded-lg border ${
