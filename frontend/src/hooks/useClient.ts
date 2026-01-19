@@ -1,15 +1,10 @@
-import { getClientById } from "../services/clientService";
-import type { ClientData } from "../schemas/client";
 import { useQuery } from "@tanstack/react-query";
+import { getClients } from "../services/clientService";
+import type { Client } from "../schemas/client.schema";
 
-export function useClientById(id: string | null) {
-  return useQuery<ClientData, Error>({
-    queryKey: ["client", id],
-    queryFn: async () => {
-      if (!id) throw new Error("El número ID es requerido");
-      return await getClientById(id);
-    },
-    enabled: !!id, 
-    retry: false,
+export function useClients() {
+  return useQuery<Client[]>({
+    queryKey: ["clients"],
+    queryFn: getClients,
   });
 }
