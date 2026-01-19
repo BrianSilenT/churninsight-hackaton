@@ -15,7 +15,7 @@ api.interceptors.response.use(
   (error) => {
     const message = error?.response?.data?.message || error.message || "Unknown error";
     if (error?.response?.status === 401) {
-      console.warn("No autizado error: 401");
+      console.warn("No autorizado error: 401");
     }
     return Promise.reject(new Error(message));
   }

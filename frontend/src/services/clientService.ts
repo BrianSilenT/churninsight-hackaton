@@ -15,7 +15,7 @@ export async function getClientById(id: string): Promise<ClientData> {
     }
     throw error;
   }
-}
+};
 
 export async function getClients(): Promise<ClientData[]> {
   try {
@@ -34,4 +34,4 @@ export async function getClients(): Promise<ClientData[]> {
     }
     throw error;
   }
-}
+};

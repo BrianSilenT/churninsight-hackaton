@@ -1,0 +1,36 @@
+import type { PredictionResponse } from "../types/predictionResponse";
+
+export const mockPredictions: { [key: string]: PredictionResponse } = {
+  "12345678": {
+    prevision: "Va a continuar",
+    probabilidad: 23.0
+  },
+  "87654321": {
+    prevision: "Va a cancelar",
+    probabilidad: 87.5
+  },
+  "45678912": {
+    prevision: "Va a continuar",
+    probabilidad: 12.0
+  },
+  "78912345": {
+    prevision: "Va a cancelar",
+    probabilidad: 92.0
+  },
+  "78914345": {
+    prevision: "Va a continuar",
+    probabilidad: 3.0
+  },
+  "78911345": {
+    prevision: "Va a cancelar",
+    probabilidad: 85.0
+  },
+  "78919345": {
+    prevision: "Va a cancelar",
+    probabilidad: 45.0
+  },
+  "72912345": {
+    prevision: "Va a cancelar",
+    probabilidad: 56.0
+  }
+};

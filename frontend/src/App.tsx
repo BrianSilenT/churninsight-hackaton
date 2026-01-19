@@ -1,4 +1,7 @@
-import { Search, Moon, Sun, RotateCcw, ChevronDown } from "lucide-react";
+import { Search, Moon, Sun, RotateCcw, ChevronDown, AlertCircle, CheckCircle} from "lucide-react";
+import type { PredictionResponse } from "./types/predictionResponse";   
+import { mockPredictions } from "./mocks/mockPredictions";
+import { usePrediction } from "./hooks/usePrediction"
 import { useClientById } from "./hooks/useClient";
 import type { ClientData } from "./types/client";
 import { mockClients } from "./mocks/mockClients";
@@ -8,55 +11,48 @@ import type { KeyboardEvent } from "react";
 
 export default function App() {
   const [darkMode, setDarkMode]               = useState(false);
-  const [searchDni, setSearchDni]             = useState<string | null>(null);
+  const [searchId, setSearchId]               = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
-  const [typedId, setTypedId]               = useState("");       
+  const [typedId, setTypedId]                 = useState("");       
   const [selectInput, setSelectInput]         = useState(""); 
-  const [selectedId, setSelectedId]         = useState<string | null>(null);
+  const [selectedId, setSelectedId]           = useState<string | null>(null);
   const [showList, setShowList]               = useState(false);
 
   const [mocksActive, setMocksActive]         = useState(false);
 
 
-  // CONSULTA DE CLIENTE POR API si y solo si searchDni existe
+  // CONSULTA DE CLIENTE POR API si y solo si searchId existe
 
-  const { data: queriedClient, isLoading, error } = useClientById(searchDni);
+  const { data: queriedClient, isLoading, error } = useClientById(searchId);
+  const { data: predictionData, isLoading: loadingPrediction } = usePrediction(searchId);
 
   // SI API responde se utiliza ese ClientRequest, sino se usa el mock como simulación
 
   const clientData =
-  (queriedClient ??
-    (searchAttempted && !isLoading && error
-      ? mockClients[selectedId ?? ""]
-      : null)) as ClientData | null;
+    (queriedClient ??
+      (searchAttempted && !isLoading && error && searchId
+        ? mockClients[searchId] 
+        : null)) as ClientData | null;
 
-  const autocompleteSource: ClientData[] = queriedClient
-  ? Array.isArray(queriedClient)
-    ? queriedClient
-    : [queriedClient]
-  : Object.values(mockClients);
+  const prediction = 
+    (predictionData ?? 
+      (searchAttempted && clientData 
+        ? mockPredictions[clientData.id] 
+        : null)) as PredictionResponse | null;
 
-  const filteredUsers = autocompleteSource.filter((u) =>
-  u.id.includes(selectInput) ||
-  u.nombreUsuario
-    ?.toLowerCase()
-    .includes(selectInput.toLowerCase())
-  );  
+  const autocompleteSource = Object.values(mockClients);
+
+  const filteredUsers = autocompleteSource.filter((u) => u.id.includes(selectInput));
 
   // Escucha eventos del mock service worker para saber si está activo
 
   useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).__MSW_ACTIVE) {
+    if (typeof window !== "undefined" && (window as any).__MSW_ACTIVE) 
       setMocksActive(true);
-      return;
-    }
 
-    function onStarted() {
-      setMocksActive(true);
-    }
-    function onFailed() {
-      setMocksActive(false);
-    }
+    const onStarted = () => setMocksActive(true);
+    const onFailed = () => setMocksActive(false);
+
     window.addEventListener("msw:started", onStarted);
     window.addEventListener("msw:failed", onFailed);
     return () => {
@@ -80,26 +76,28 @@ export default function App() {
 
 
     const handleSearch = () => {
-    const dniToSearch = selectedId ?? typedId.trim();
-    if (!dniToSearch) return;
+    const IdToSearch = typedId.trim() !== "" ? typedId.trim() : selectedId;
+    
+    if (!IdToSearch) return;
 
-    setSelectedId(dniToSearch);
     setSearchAttempted(true);
-    setSearchDni(dniToSearch);
+    setSearchId(IdToSearch);
+    setShowList(false);
   };
 
   const handleReset = () => {
     setTypedId("");        
     setSelectInput("");       
     setSelectedId(null);
-    setSearchDni(null);
+    setSearchId(null);
     setSearchAttempted(false);
     setShowList(false);
   };
 
   const handleSelectUser = (id: string) => {
     setSelectInput(id);   
-    setSelectedId(id);   
+    setSelectedId(id);
+    setTypedId("");   
     setShowList(false);    
   };
 
@@ -109,9 +107,9 @@ export default function App() {
     }
   };
 
-  const totalEvaluados = Object.keys(mockClients).length;
+  const totalEvaluados = Object.keys(mockPredictions).length;
   const tasaCancelacion = (
-    Object.values(mockClients).filter((c) => c.vaCancelar)
+    Object.values(mockPredictions).filter((c) => c.prevision === "Va a cancelar")
       .length / totalEvaluados
   ).toFixed(2);
 
@@ -179,7 +177,13 @@ export default function App() {
             <input
               type="text"
               value={typedId}
-              onChange={(e) => setTypedId(e.target.value)}
+              onChange={(e) => {
+                setTypedId(e.target.value);
+                if (e.target.value.trim() !== "") {
+                  setSelectedId(null);
+                  setSelectInput("");
+                }
+              }}
               onKeyDown={handleKeyPress}
               placeholder="Ingrese el ID del cliente"
               className={`flex-1 px-4 py-3 rounded-lg border transition-colors ${
@@ -226,6 +230,7 @@ export default function App() {
                 value={selectInput}
                 readOnly
                 placeholder="Seleccione el ID del cliente"
+                onKeyDown={handleKeyPress}
                 className={`w-full px-4 pr-12 py-3 rounded-lg border cursor-pointer
                   transition-all focus:outline-none focus:ring-2 focus:ring-blue-500
                   ${
@@ -283,7 +288,6 @@ export default function App() {
                   >
                     <span className="font-bold pointer-events-none">{user.id}</span>
                     <span className="text-xs opacity-60 pointer-events-none uppercase">
-                      {user.nombreUsuario}
                     </span>
                   </li>
                 ))
@@ -395,7 +399,7 @@ export default function App() {
                         : "text-gray-900"
                     }`}
                   >
-                    {clientData.nombreUsuario}
+                    {clientData.id}
                   </td>
                   <td
                     className={`px-4 py-4 ${
@@ -404,19 +408,21 @@ export default function App() {
                         : "text-gray-900"
                     }`}
                   >
-                    {clientData.tiempoContrato}
+                    {clientData.contractLength === 12
+                      ? "Anual" : clientData.contractLength === 3
+                      ? "Trimestral" : "Mensual"}
                   </td>
                   <td className="px-4 py-4">
                     <span
                       className={`px-3 py-1 rounded-full ${
-                        clientData.retrasosPagos > 3
+                        clientData.paymentDelay > 3
                           ? "bg-red-100 text-red-700"
-                          : clientData.retrasosPagos > 0
+                          : clientData.paymentDelay > 0
                             ? "bg-yellow-100 text-yellow-700"
                             : "bg-green-100 text-green-700"
                       }`}
                     >
-                      {clientData.retrasosPagos}
+                      {clientData.paymentDelay}
                     </span>
                   </td>
                   <td
@@ -426,7 +432,9 @@ export default function App() {
                         : "text-gray-900"
                     }`}
                   >
-                    {clientData.planType}
+                    {clientData.subscriptionType === 2 
+                    ? "Premium" : clientData.subscriptionType === 1 
+                    ? "Estándar" : "Básico"}
                   </td>
                 </tr>
               </tbody>
@@ -435,93 +443,84 @@ export default function App() {
         )}
 
         {/* Resultados de predicción */}
+
         {clientData && (
-          <div
-            className={`p-6 rounded-lg shadow-lg mb-6 ${
-              darkMode ? "bg-gray-800" : "bg-white"
-            }`}
-          >
-            <h3
-              className={`mb-3 ${
+          <div className={`p-6 rounded-lg shadow-lg mb-6 ${
+            darkMode ? "bg-gray-800" : "bg-white"
+          }`}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              Análisis de predicción:
+              {loadingPrediction && (
+                <span className="animate-pulse text-sm font-normal text-blue-500">
+                  (Calculando...)
+                </span>
+              )}
+            </h3>
+          
+            {prediction ? (
+              <div className={`p-5 rounded-xl border-l-8 flex items-start gap-4 transition-colors duration-300 ${
+                prediction.prevision === "Va a cancelar" 
+                  ? darkMode 
+                  ? "bg-red-900/20 border-red-500 text-red-200" 
+                  : "bg-red-50 border-red-500 text-red-900"    
+                  : darkMode 
+                  ? "bg-green-900/20 border-green-500 text-green-200" 
+                  : "bg-green-50 border-green-500 text-green-900"    
+              }`}>
+                {prediction.prevision === "Churn" 
+                  ? <AlertCircle className={darkMode ? 
+                    "text-red-400" 
+                    : "text-red-600"} size={24} /> 
+                  : <CheckCircle className={darkMode ? 
+                    "text-green-400" 
+                    : "text-green-600"} size={24} /> 
+                } 
+                <div>
+                  <p className="text-lg">
+                    Estado: <strong>{prediction.prevision}</strong>
+                  </p>
+                  <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    Probabilidad calculada: <strong className={darkMode ? "text-white" : "text-black"}>{prediction.probabilidad}%</strong>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              !loadingPrediction && (
+                <p className={`text-center py-4 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
+                  No hay predicción disponible para este ID.
+                </p>
+              )
+            )}<br></br>
+            
+            {/* Estadísticas */}
+            <h2
+              className={`mb-4 ${
                 darkMode ? "text-gray-200" : "text-gray-800"
               }`}
             >
-              Predicción de Cancelación
-            </h3>
-            <div
-              className={`p-4 rounded-lg border-2 ${
-                clientData.vaCancelar
-                  ? darkMode
-                    ? "bg-red-900/20 border-red-500"
-                    : "bg-red-50 border-red-300"
-                  : darkMode
-                    ? "bg-green-900/20 border-green-500"
-                    : "bg-green-50 border-green-300"
-              }`}
-            >
-              <p
-                className={`${
-                  clientData.vaCancelar
-                    ? darkMode
-                      ? "text-red-300"
-                      : "text-red-800"
-                    : darkMode
-                      ? "text-green-300"
-                      : "text-green-800"
-                }`}
-              >
-                Nombre de usuario:{" "}
-                <strong>{clientData.nombreUsuario}</strong>,
-                ID: <strong>{clientData.id}</strong>,{" "}
-                <strong>
-                  {clientData.vaCancelar
-                    ? "va a cancelar"
-                    : "no va a cancelar"}
-                </strong>
-                , probabilidad:{" "}
-                <strong>{clientData.probabilidad}%</strong>
-              </p>
-            </div>
-          </div>
-        )}
+              Estadísticas Generales:
+            </h2>
+            <section className={`mt-6 p-4 rounded-lg border-t ${darkMode ? "bg-gray-800/50 border-gray-700" : "bg-gray-50 border-gray-100"}`}>
+                <p className="text-sm opacity-80">
+                  Total evaluados en sistema: <strong>{totalEvaluados}</strong> <br /> 
+                  Tasa Churn: <strong>{tasaCancelacion}</strong>
+                </p>
+            </section>
+          </div> 
+        )} 
 
-        {/* Estadísticas*/}
-        <div
-          className={`p-6 rounded-lg shadow-lg ${
-            darkMode ? "bg-gray-800" : "bg-white"
-          }`}
-        >
-          <p
-            className={`${
-              darkMode ? "text-gray-400" : "text-gray-600"
-            }`}
-          >
-            Total evaluados: <strong>{totalEvaluados}</strong>,
-            tasa de cancelación:{" "}
-            <strong>{tasaCancelacion}</strong>
-          </p>
-        </div>
-
-        {/* Helper Text */}
         {!clientData && !searchAttempted && (
-          <div
-            className={`mt-6 p-4 rounded-lg ${
-              darkMode
-                ? "bg-blue-900/20 border border-blue-500/30"
-                : "bg-blue-50 border border-blue-200"
+          <div className={`mt-6 p-4 rounded-lg border ${
+              darkMode ? "bg-blue-900/20 border-blue-500/30 text-blue-300" : "bg-blue-50 border-blue-200 text-blue-700"
             }`}
           >
-            <p
-              className={`${
-                darkMode ? "text-blue-300" : "text-blue-700"
-              }`}
-            >
+            <p>
               💡 En caso de probar y no conocer un ID válido, selecciona el campo de 
-                  "Seleccione el ID del cliente" y podrás seleccionar cualquier opción
+              "Seleccione el ID del cliente" y podrás seleccionar cualquier opción.
             </p>
           </div>
         )}
-      </div>
-    </div>
+      </div> 
+    </div> 
   );
 }
