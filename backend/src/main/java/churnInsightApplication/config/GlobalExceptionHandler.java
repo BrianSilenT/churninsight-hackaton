@@ -18,6 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+        log.warn("Error de validación: {}", ex.getMessage());
         Map<String, Object> body = new HashMap<>();
         body.put("message", "Entrada inválida");
         body.put("errors", ex.getBindingResult().getFieldErrors().stream()
@@ -28,6 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralErrors(Exception ex) {
+        log.error("Error inesperado", ex);
         Map<String, Object> body = new HashMap<>();
         body.put("message", "Error interno en el servidor");
         body.put("error", ex.getMessage());
