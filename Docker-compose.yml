@@ -4,6 +4,19 @@ services:
     container_name: backend
     ports:
       - "8080:8080"
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx1024m
+    entrypoint: ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "0.5"
 
   frontend:
     build: ./frontend
@@ -11,4 +24,10 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
