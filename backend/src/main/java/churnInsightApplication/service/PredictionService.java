@@ -2,12 +2,12 @@ package churnInsightApplication.service;
 
 import churnInsightApplication.dto.ClientData;
 import ai.onnxruntime.*;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +21,16 @@ public class PredictionService {
     @PostConstruct
     public void init() throws OrtException, IOException {
         env = OrtEnvironment.getEnvironment();
-        // Cargar el modelo desde el classpath
-        ClassPathResource resource = new ClassPathResource("modelo_churn_final.onnx");
-        session = env.createSession(resource.getFile().getAbsolutePath(), new OrtSession.SessionOptions());
+
+        // ✅ Cargar el modelo como InputStream desde el classpath
+        try (InputStream modelStream = getClass().getResourceAsStream("/modelo_churn_final.onnx")) {
+            if (modelStream == null) {
+                throw new IOException("❌ No se encontró el modelo en resources");
+            }
+            byte[] modelBytes = modelStream.readAllBytes();
+            session = env.createSession(modelBytes, new OrtSession.SessionOptions());
+        }
+
         System.out.println("✅ Modelo ONNX cargado exitosamente desde resources");
     }
 
