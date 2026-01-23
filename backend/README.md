@@ -68,10 +68,6 @@ json
 }
 
 
-*(Agrega aquí más endpoints según lo que tengas implementado: usuarios, contratos, métricas, etc.)*
-
-
-
 ## ⚙️ Configuración
 - **Variables de entorno:**
   - `JAVA_OPTS` → configuración de memoria (ejemplo: `-Xms256m -Xmx1024m`)

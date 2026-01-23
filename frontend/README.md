@@ -81,7 +81,7 @@ Antes de ejecutar el proyecto en local es necesario contar con lo siguiente:
 1. Clona el repositorio:
 
 ```bash
-git clone [https://github.com/tu-usuario/churninsight.git](https://github.com/tu-usuario/churninsight.git)
+git clone [https://github.com/BrianSilenT/churninsight.git](https://github.com/BrianSilenT/churninsight.git)
 cd churninsight
 ```
 
@@ -128,7 +128,7 @@ npm run lint:ci      # Lint para CI (falla si hay warnings)
 
 El contenido que debe tener el archivo .env debe contener lo siguiente: 
 
-/src/.env
+*/src/.env*
 
 **VITE_API_URL=http://localhost:8080**
 

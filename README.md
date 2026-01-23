@@ -86,7 +86,7 @@ El contenido que debe tener el archivo .env debe contener lo siguiente:
 
 ### Paso 1: Clonar el repositorio
 ```bash
-git clone [https://github.com/tu-usuario/churninsight.git](https://github.com/tu-usuario/churninsight.git)
+git clone [https://github.com/BrianSilenT/churninsight.git](https://github.com/BrianSilenT/churninsight.git)
 cd churninsight
 
 ```
@@ -179,7 +179,7 @@ Esta configuración simplifica el despliegue, permitiendo que cualquier persona 
 
 ## 🧑‍💻 Contribución y Equipo
 
-* **Data Science:** 🇵🇪 Carla Clemente Figueroa, 🇸🇻 Jorge Muño
+* **Data Science:** 🇵🇪 Carla Clemente Figueroa, 🇸🇻 Jorge Muñoz
 * **Backend Developer:** 🇲🇽 Brian Plasencia Guzman
 * **Frontend Developer:** 🇵🇪 Carla Clemente Figueroa, 🇨🇴 Sebastián Henao Arenas
 
