@@ -126,6 +126,12 @@ npm run lint:ci      # Lint para CI (falla si hay warnings)
 
 > **Nota:** El proyecto utiliza un archivo .env.development. Asegúrate de configurar las variables necesarias para el entorno local.
 
+El contenido que debe tener el archivo .env debe contener lo siguiente: 
+
+/src/.env
+
+**VITE_API_URL=http://localhost:8080**
+
 ---
 
 **Contacto / Licencia**

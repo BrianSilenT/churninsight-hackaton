@@ -49,17 +49,19 @@ public class PredictionService {
                 client.getMonthlySpend().floatValue()
         };
 
-        try (OnnxTensor inputTensor = OnnxTensor.createTensor(env, new float[][]{features})) {
+        try (OnnxTensor inputTensor = OnnxTensor.createTensor(env, new float[][] { features })) {
             try (OrtSession.Result result = session.run(Collections.singletonMap("float_input", inputTensor))) {
                 List<?> outputList = (List<?>) result.get(1).getValue();
-                ai.onnxruntime.OnnxMap onnxMap = (ai.onnxruntime.OnnxMap) outputList.get(0);
 
-                @SuppressWarnings("unchecked")
-                Map<Long, Float> probabilities = (Map<Long, Float>) onnxMap.getValue();
+                try (OnnxMap onnxMap = (OnnxMap) outputList.get(0)) {
 
-                float probChurn = probabilities.get(1L);
-                System.out.println("✅ Inferencia exitosa. Probabilidad: " + probChurn);
-                return probChurn;
+                    @SuppressWarnings("unchecked")
+                    Map<Long, Float> probabilities = (Map<Long, Float>) onnxMap.getValue();
+
+                    float probChurn = probabilities.get(1L);
+                    System.out.println("✅ Inferencia exitosa. Probabilidad: " + probChurn);
+                    return probChurn;
+                }
             }
         }
     }
